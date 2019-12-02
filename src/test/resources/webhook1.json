@@ -1,0 +1,28 @@
+{
+  "responseId": "0000000000000000000000001",
+  "queryResult": {
+    "queryText": "Hello perosa",
+    "action": "input.welcome",
+    "parameters": {},
+    "outputContexts": [
+      {
+        "name":"projects/brandmybot-qaqudq/agent/sessions/01/contexts/DefaultWelcomeIntent-followup",
+        "lifespanCount": 2
+      }
+
+    ],
+    "intent": {
+      "id": "int000000000000001",
+      "displayName": "Default Welcome Intent"
+    },
+    "intentDetectionConfidence": 1,
+    "languageCode": "en",
+    "timestamp": "2019-05-03T09:54:06.924Z",
+    "source": "agent"
+  },
+  "originalDetectIntentRequest": {
+    "payload": {
+    }
+  },
+  "session": "projects/brandmybot-qaqudq/agent/sessions/01"
+}
