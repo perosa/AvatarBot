@@ -1,11 +1,11 @@
 package com.perosa.avatarbot.controller;
 
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2Context;
-import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2EventInput;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2WebhookRequest;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2WebhookResponse;
-import com.perosa.avatarbot.payload.ContextParser;
+import com.perosa.avatarbot.model.Session;
+import com.perosa.avatarbot.model.SessionStore;
+import com.perosa.avatarbot.payload.PayloadParser;
 import com.perosa.avatarbot.util.ApplicationProperty;
 import com.perosa.avatarbot.util.ResourceHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.*;
 import java.util.logging.Logger;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -28,12 +26,9 @@ public class MainController {
 
     private static final Logger LOGGER = Logger.getLogger(MainController.class.getName());
     //
-    private static final String AUTH_TOKEN = "*p3r0s}2015I[{]445!+/67;";
-    private static final String CONTEXT_NAME = "tags";
 
-    //
     @Autowired
-    private ContextParser contextParser;
+    private PayloadParser payloadParser;
     //
     @Autowired
     private ResourceHelper resourceHelper;
@@ -41,6 +36,8 @@ public class MainController {
     @Autowired
     private ApplicationProperty applicationProperty;
     //
+    @Autowired
+    private SessionStore sessionStore;
 
     private static JacksonFactory jacksonFactory = JacksonFactory.getDefaultInstance();
 
@@ -62,138 +59,33 @@ public class MainController {
         request = extractGoogleCloudDialogflowV2WebhookRequest(body);
         response = new GoogleCloudDialogflowV2WebhookResponse();
 
-        HttpSession httpSession = httpServletRequest.getSession();
-
         LOGGER.info("request: " + request);
-
-        // initialise OutputContexts list
-        if(response.getOutputContexts() == null) {
-            response.setOutputContexts(new ArrayList<>());
-        }
 
         if (request == null) {
             throw new RuntimeException("Request is null");
         }
 
         String sessionId = request.getSession();
-        String input = getContextParser().getUserText(request);
+        String input = getPayloadParser().getUserText(request);
 
-        LOGGER.info("userText : " + input);
-
-        if (getContextParser().isWelcomeIntent(request)) {
-            response.setOutputContexts(new ArrayList<>());
+        if (getPayloadParser().isWelcomeIntent(request)) {
+            getSessionStore().addTo(new Session(sessionId));
         } else {
-            String action = getContextParser().getAction(request);
+
+            Session session = getSessionStore().getFrom(sessionId);
+            if (session == null) {
+                throw new RuntimeException("Session is null");
+            }
+
+            String action = getPayloadParser().getAction(request);
 
             if (action != null && action.equalsIgnoreCase("tag")) {
-                LOGGER.info("action : " + action);
-
-                GoogleCloudDialogflowV2Context context = getContextParser().getContext(request, CONTEXT_NAME);
-                LOGGER.info("context : " + context);
-
-                if(context == null) {
-                    context = new GoogleCloudDialogflowV2Context();
-                    context.setName(CONTEXT_NAME);
-                    context.setLifespanCount(20);
-                    Map<String, Object> outputContextParameters = new HashMap<>();
-                    context.setParameters(outputContextParameters);
-                }
-
-                Map<String, Object> map = context.getParameters();
-                map.put(input, "tag");
-                LOGGER.info("map : " + map);
-
-                context.setParameters(map);
-
-                LOGGER.info("context : " + context);
-                response.getOutputContexts().add(context);
-
-
+                session.addToTags(input);
             }
         }
 
-
-//        if (getContextParser().isFilesContextNotFound(request)) {
-//            // Files Context hasnt been set yet
-//            LOGGER.fine("Context /files NOT found");
-//
-//            // build list of URLs
-//            String path = getApplicationProperty().getResourcesFolder();
-//            String host = "https://" + httpServletRequest.getServerName();
-//
-//            Map<String, String> map = getResourceHelper().getResourceUrls(path, host, "token");
-//
-//            // set Files Context
-//            //setOutputContext(sessionId + "/contexts/files", map, response);
-//
-//            // followUp Welcome to re-trigger the Welcome Intent
-//            GoogleCloudDialogflowV2EventInput googleCloudDialogflowV2EventInput = new GoogleCloudDialogflowV2EventInput();
-//            googleCloudDialogflowV2EventInput.setName("Welcome");
-//
-//            response.setFollowupEventInput(googleCloudDialogflowV2EventInput);
-//
-//            LOGGER.info("Response: " + response.toString());
-//
-//
-//            String action = getContextParser().getAction(request);
-//
-//        }
-
-
+        LOGGER.info("session : " + getSessionStore().getFrom(sessionId));
         return response;
-
-    }
-
-    String process(GoogleCloudDialogflowV2WebhookRequest webHookRequest) {
-        String ret = "";
-
-        String action = getContextParser().getAction(webHookRequest);
-
-        if (!action.isEmpty()) {
-
-        }
-
-        if (action.equalsIgnoreCase("DefaultWelcomeIntent.DefaultWelcomeIntent-yes")) {
-
-        } else if (action.equalsIgnoreCase("funTag")) {
-
-        }
-
-        return ret;
-    }
-
-
-
-    private void setTagsOnContext(Map<String, Object> contextParameters, GoogleCloudDialogflowV2WebhookResponse response) {
-
-        GoogleCloudDialogflowV2Context outputContext = new GoogleCloudDialogflowV2Context();
-        outputContext.setName(CONTEXT_NAME);
-        outputContext.setLifespanCount(20);
-        Map<String, Object> outputContextParameters = new HashMap<>();
-
-        contextParameters.forEach((filename, url) ->
-                outputContextParameters.put(filename, url));
-
-        outputContext.setParameters(outputContextParameters);
-
-        response.getOutputContexts().add(outputContext);
-
-    }
-
-    private void setOutputContext(String contextName, Map<String, String> contextParameters, GoogleCloudDialogflowV2WebhookResponse response) {
-        LOGGER.fine("setOutputContext sessionId:" + contextName);
-
-        GoogleCloudDialogflowV2Context outputContext = new GoogleCloudDialogflowV2Context();
-        outputContext.setName(contextName);
-        outputContext.setLifespanCount(20);
-        Map<String, Object> outputContextParameters = new HashMap<>();
-
-        contextParameters.forEach((filename, url) ->
-                outputContextParameters.put(filename, url));
-
-        outputContext.setParameters(outputContextParameters);
-
-        response.getOutputContexts().add(outputContext);
 
     }
 
@@ -213,40 +105,13 @@ public class MainController {
         return googleCloudDialogflowV2WebhookRequest;
     }
 
-    // verify token from DialogFlow
-    private void verifyToken(HttpServletRequest request) {
 
-        String header = getAuthorizationHeader(request);
-
-        if (header == null || !header.equals(AUTH_TOKEN)) {
-            throw new RuntimeException("Invalid token: " + header);
-        }
-
+    public PayloadParser getPayloadParser() {
+        return payloadParser;
     }
 
-    private String getAuthorizationHeader(HttpServletRequest request) {
-        String jwt = null;
-
-        Enumeration headerNames = request.getHeaderNames();
-        while (headerNames.hasMoreElements()) {
-            String key = (String) headerNames.nextElement();
-
-            if (key.equalsIgnoreCase("authorization")) {
-                jwt = request.getHeader(key);
-                break;
-            }
-
-        }
-
-        return jwt;
-    }
-
-    public ContextParser getContextParser() {
-        return contextParser;
-    }
-
-    public void setContextParser(ContextParser contextParser) {
-        this.contextParser = contextParser;
+    public void setPayloadParser(PayloadParser payloadParser) {
+        this.payloadParser = payloadParser;
     }
 
     public ResourceHelper getResourceHelper() {
@@ -265,4 +130,11 @@ public class MainController {
         this.applicationProperty = applicationProperty;
     }
 
+    public SessionStore getSessionStore() {
+        return sessionStore;
+    }
+
+    public void setSessionStore(SessionStore sessionStore) {
+        this.sessionStore = sessionStore;
+    }
 }

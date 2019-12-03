@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service;
 import java.util.logging.Logger;
 
 @Service
-public class ContextParser {
+public class PayloadParser {
 
-    private static final Logger LOGGER = Logger.getLogger(ContextParser.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(PayloadParser.class.getName());
 
     public boolean isWelcomeIntent(GoogleCloudDialogflowV2WebhookRequest webHookRequest) {
         boolean ret = false;
@@ -26,21 +26,6 @@ public class ContextParser {
 
     public String getUserText(GoogleCloudDialogflowV2WebhookRequest webHookRequest) {
         return webHookRequest.getQueryResult().getQueryText();
-    }
-
-    public boolean isFilesContextNotFound(GoogleCloudDialogflowV2WebhookRequest webHookRequest) {
-        boolean ret = true;
-
-        String NAME = webHookRequest.getSession() + "/contexts/files";
-
-        GoogleCloudDialogflowV2Context context = getContext(webHookRequest, NAME);
-
-        if(context != null && context.getName().equals(NAME)) {
-            ret = false;
-        }
-
-        return ret;
-
     }
 
     public GoogleCloudDialogflowV2Context getContext(GoogleCloudDialogflowV2WebhookRequest webHookRequest, String name) {

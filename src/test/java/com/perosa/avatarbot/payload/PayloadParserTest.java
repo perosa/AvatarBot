@@ -10,17 +10,17 @@ import java.util.logging.Logger;
 
 import static org.junit.Assert.*;
 
-public class ContextParserTest {
+public class PayloadParserTest {
 
-    private static final Logger LOGGER = Logger.getLogger(ContextParserTest.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(PayloadParserTest.class.getName());
 
     @Test
     public void isWelcome() {
         LOGGER.info("isWelcome");
 
-        GoogleCloudDialogflowV2WebhookRequest request = load("/webhook1.json");
+        GoogleCloudDialogflowV2WebhookRequest request = load("/hi.json");
 
-        ContextParser helper = new ContextParser();
+        PayloadParser helper = new PayloadParser();
 
         assertEquals(true, helper.isWelcomeIntent(request));
     }
@@ -29,9 +29,9 @@ public class ContextParserTest {
     public void getContext() {
         LOGGER.info("getContext");
 
-        GoogleCloudDialogflowV2WebhookRequest request = load("/webhook1.json");
+        GoogleCloudDialogflowV2WebhookRequest request = load("/hi.json");
 
-        ContextParser helper = new ContextParser();
+        PayloadParser helper = new PayloadParser();
 
         assertNotNull(helper.getContext(request, "projects/brandmybot-qaqudq/agent/sessions/01/contexts/DefaultWelcomeIntent-followup"));
     }

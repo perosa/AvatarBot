@@ -1,0 +1,42 @@
+{
+  "originalDetectIntentRequest": {
+    "payload": {}
+  },
+  "queryResult": {
+    "action": "tag",
+    "allRequiredParamsPresent": true,
+    "fulfillmentMessages": [
+      {
+        "text": {
+          "text": [
+            "Male? Female? No preference?"
+          ]
+        }
+      }
+    ],
+    "fulfillmentText": "Male? Female? No preference?",
+    "intent": {
+      "displayName": "Fun avatar?",
+      "name": "projects/brandmybot-qaqudq/agent/intents/52d7b83e-cac3-409e-861b-72537ad7f0ab"
+    },
+    "intentDetectionConfidence": 1.0,
+    "languageCode": "en",
+    "outputContexts": [
+      {
+        "lifespanCount": 5,
+        "name": "projects/brandmybot-qaqudq/agent/sessions/1fee8533-0bc3-eb40-4944-db258f2bb3e0/contexts/gender-followup"
+      },
+      {
+        "lifespanCount": 1,
+        "name": "projects/brandmybot-qaqudq/agent/sessions/1fee8533-0bc3-eb40-4944-db258f2bb3e0/contexts/defaultwelcomeintent-yes-followup"
+      },
+      {
+        "name": "projects/brandmybot-qaqudq/agent/sessions/1fee8533-0bc3-eb40-4944-db258f2bb3e0/contexts/defaultwelcomeintent-followup"
+      }
+    ],
+    "parameters": {},
+    "queryText": "fun"
+  },
+  "responseId": "923a606f-a813-4ef8-a121-daffbb801041-9cc28bb4",
+  "session": "projects/brandmybot-qaqudq/agent/sessions/1fee8533-0bc3-eb40-4944-db258f2bb3e0"
+}
