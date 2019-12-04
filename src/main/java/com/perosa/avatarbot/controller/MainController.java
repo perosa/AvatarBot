@@ -1,6 +1,7 @@
 package com.perosa.avatarbot.controller;
 
 import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2EventInput;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2WebhookRequest;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2WebhookResponse;
 import com.perosa.avatarbot.model.Session;
@@ -67,9 +68,15 @@ public class MainController {
 
         String sessionId = request.getSession();
         String input = getPayloadParser().getUserText(request);
+        String intent = getPayloadParser().getIntentDisplayName(request);
 
         if (getPayloadParser().isWelcomeIntent(request)) {
             getSessionStore().addTo(new Session(sessionId));
+//        } else if (getPayloadParser().getIntentDisplayName(request).equalsIgnoreCase("AllCriteriaPassed")) {
+//            // followUp Welcome to re-trigger the Welcome Intent
+//            GoogleCloudDialogflowV2EventInput googleCloudDialogflowV2EventInput = new GoogleCloudDialogflowV2EventInput();
+//            googleCloudDialogflowV2EventInput.setName("getAvatar");
+//            response.setFollowupEventInput(googleCloudDialogflowV2EventInput);
         } else {
 
             Session session = getSessionStore().getFrom(sessionId);
@@ -78,7 +85,6 @@ public class MainController {
             }
 
             String action = getPayloadParser().getAction(request);
-
             if (action != null && action.equalsIgnoreCase("tag")) {
                 session.addToTags(input);
             }

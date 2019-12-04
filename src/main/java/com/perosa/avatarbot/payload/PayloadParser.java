@@ -63,4 +63,16 @@ public class PayloadParser {
         return action;
     }
 
+    public String getIntentDisplayName(GoogleCloudDialogflowV2WebhookRequest webHookRequest) {
+        String action = "";
+
+        GoogleCloudDialogflowV2QueryResult queryResult = webHookRequest.getQueryResult();
+
+        if (queryResult != null) {
+            action = queryResult.getIntent().getDisplayName();
+        }
+
+        return action;
+    }
+
 }
