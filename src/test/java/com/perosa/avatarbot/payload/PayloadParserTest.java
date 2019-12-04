@@ -20,9 +20,42 @@ public class PayloadParserTest {
 
         GoogleCloudDialogflowV2WebhookRequest request = load("/hi.json");
 
-        PayloadParser helper = new PayloadParser();
+        PayloadParser parser = new PayloadParser();
 
-        assertEquals(true, helper.isWelcomeIntent(request));
+        assertEquals(true, parser.isWelcomeIntent(request));
+    }
+
+    @Test
+    public void getUserText() {
+        LOGGER.info("getUserText");
+
+        GoogleCloudDialogflowV2WebhookRequest request = load("/hi.json");
+
+        PayloadParser parser = new PayloadParser();
+
+        assertEquals("Hello perosa", parser.getUserText(request));
+    }
+
+    @Test
+    public void getAction() {
+        LOGGER.info("getAction");
+
+        GoogleCloudDialogflowV2WebhookRequest request = load("/funTag.json");
+
+        PayloadParser parser = new PayloadParser();
+
+        assertEquals("tag", parser.getAction(request));
+    }
+
+    @Test
+    public void getIntentDisplayName() {
+        LOGGER.info("getIntentDisplayName");
+
+        GoogleCloudDialogflowV2WebhookRequest request = load("/funTag.json");
+
+        PayloadParser parser = new PayloadParser();
+
+        assertEquals("Fun avatar?", parser.getIntentDisplayName(request));
     }
 
     @Test
