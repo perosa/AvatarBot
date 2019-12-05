@@ -22,9 +22,16 @@ class FileHelperTest {
     }
 
     @Test
-    public void getResource() {
+    public void getContent() {
 
         FileHelper fileHelper = new FileHelper();
-        assertNotNull(fileHelper.getContent(new File("src/main/resources/avatars/professional/male/man.png")));
+        assertNotNull(fileHelper.getContent("src/main/resources/avatars/professional/male/man.png"));
+    }
+
+    @Test
+    public void getUrl() {
+
+        FileHelper fileHelper = new FileHelper();
+        assertEquals("http://localhost/avatarbot/view/dir/man.png", fileHelper.getUrl("http://localhost","dir/man.png"));
     }
 }

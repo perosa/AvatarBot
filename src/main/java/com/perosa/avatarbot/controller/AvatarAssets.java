@@ -1,7 +1,6 @@
 package com.perosa.avatarbot.controller;
 
-import com.perosa.avatarbot.util.ApplicationProperty;
-import com.perosa.avatarbot.util.ResourceHelper;
+import com.perosa.avatarbot.util.FileHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -18,17 +17,13 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 
 @RestController
-public class ResourceController {
-    private static final Logger LOGGER = Logger.getLogger(ResourceController.class.getName());
+public class AvatarAssets {
+    private static final Logger LOGGER = Logger.getLogger(AvatarAssets.class.getName());
 
     //
     @Autowired
-    private ResourceHelper resourceHelper;
+    private FileHelper fileHelper;
     //
-    @Autowired
-    private ApplicationProperty applicationProperty;
-    //
-
 
     /**
      * Fetch resources
@@ -41,24 +36,17 @@ public class ResourceController {
                                                HttpServletRequest httpServletRequest) {
         LOGGER.info("viewResource filename:" + filename);
 
-        long startTime = System.currentTimeMillis();
-
-        byte[] byteFileContent = getResourceHelper().getResource(getApplicationProperty().getResourcesFolder() + "/" + filename);
+        byte[] byteFileContent = getFileHelper().getContent(filename);
 
         if (byteFileContent == null) {
             LOGGER.warning("File Not Found: " + filename);
             return getErrorResponse("Resource Not Found: " + filename);
         }
 
-        // default to videos
-        MediaType mediaType = MediaType.valueOf("video/mp4");
+        MediaType mediaType = MediaType.IMAGE_PNG;
 
-        if (filename.endsWith(".png")) {
-            mediaType = MediaType.IMAGE_PNG;
-        } else if (filename.endsWith(".jpg")) {
+        if (filename.endsWith(".jpg")) {
             mediaType = MediaType.IMAGE_JPEG;
-        } else if (filename.endsWith(".json")) {
-            mediaType = MediaType.APPLICATION_JSON;
         }
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -74,20 +62,12 @@ public class ResourceController {
                 .body(msg.getBytes());
     }
 
-    public ResourceHelper getResourceHelper() {
-        return resourceHelper;
+    public FileHelper getFileHelper() {
+        return fileHelper;
     }
 
-    public void setResourceHelper(ResourceHelper resourceHelper) {
-        this.resourceHelper = resourceHelper;
-    }
-
-    public ApplicationProperty getApplicationProperty() {
-        return applicationProperty;
-    }
-
-    public void setApplicationProperty(ApplicationProperty applicationProperty) {
-        this.applicationProperty = applicationProperty;
+    public void setFileHelper(FileHelper fileHelper) {
+        this.fileHelper = fileHelper;
     }
 
 }

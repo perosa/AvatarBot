@@ -15,11 +15,15 @@ public class FileHelper {
 
     private static final Logger LOGGER = Logger.getLogger(FileHelper.class.getName());
 
-    public File getRandomFile(String path) {
+    public String getRandomFile(String path) {
 
         File[] files = getFiles(path);
 
-        return files[new Random().nextInt(files.length)];
+        String filepath =  files[new Random().nextInt(files.length)].getAbsolutePath()
+                .replace("/", "---")
+                .replace("\\", "---");
+
+        return filepath;
     }
 
     File[] getFiles(String path) {
@@ -33,16 +37,26 @@ public class FileHelper {
         return matchingFiles;
     }
 
-    public byte[] getContent(File file) {
+    public byte[] getContent(String filepath) {
+
+        LOGGER.info("filepath: " + filepath);
+
+        filepath = filepath.replace("---", "/");
 
         byte[] byteFileContent = null;
 
-        try (InputStream is = new FileInputStream(file)) {
+        LOGGER.info("filepath: " + filepath);
+
+        try (InputStream is = new FileInputStream(filepath)) {
             byteFileContent = IOUtils.toByteArray(is);
         } catch (Exception e) {
             LOGGER.severe("ERROR File Not Found: " + e.getMessage());
         }
 
         return byteFileContent;
+    }
+
+    public String getUrl(String host, String file) {
+        return host + "/avatarbot/view/" + file;
     }
 }

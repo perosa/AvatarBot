@@ -66,7 +66,7 @@ public class PayloadParserTest {
 
         PayloadParser helper = new PayloadParser();
 
-        assertNotNull(helper.getContext(request, "projects/brandmybot-qaqudq/agent/sessions/01/contexts/DefaultWelcomeIntent-followup"));
+        assertNotNull(helper.getContext(request, "projects/avatarbot-proj/agent/sessions/01/contexts/DefaultWelcomeIntent-followup"));
     }
 
 

@@ -1,0 +1,77 @@
+{
+  "originalDetectIntentRequest": {
+    "payload": {
+      "applicationId": "01",
+      "attachments": [],
+      "botId": "avatar-bot-unix2",
+      "groupId": "31575255",
+      "messageSource": "1"
+    }
+  },
+  "queryResult": {
+    "action": "tag",
+    "allRequiredParamsPresent": true,
+    "fulfillmentMessages": [
+      {
+        "text": {
+          "text": [
+            "Sweet! Working on it..."
+          ]
+        }
+      },
+      {
+        "payload": {
+          "ignoreTextResponse": "false",
+          "platform": "kommunicate",
+          "metadata": {
+            "contentType": "300",
+            "templateId": "7",
+            "payload": {
+              "headerText": "Here it is!",
+              "elements": [
+                {
+                  "imgSrc": "https://avatarbot.perosa.com/view/avatar.png"
+                }
+              ]
+            }
+          }
+        }
+      }
+    ],
+    "fulfillmentText": "Sweet! Working on it...",
+    "intent": {
+      "displayName": "AllCriteriaPassed",
+      "name": "projects/avatarbot-proj/agent/intents/0000007"
+    },
+    "intentDetectionConfidence": 1.0,
+    "languageCode": "en",
+    "outputContexts": [
+      {
+        "lifespanCount": 5,
+        "name": "projects/avatarbot-proj/agent/sessions/31575255/contexts/getavatar"
+      },
+      {
+        "name": "projects/avatarbot-proj/agent/sessions/31575255/contexts/defaultwelcomeintent-yes-followup"
+      },
+      {
+        "lifespanCount": 4,
+        "name": "projects/avatarbot-proj/agent/sessions/31575255/contexts/gender-followup"
+      },
+      {
+        "lifespanCount": 1,
+        "name": "projects/avatarbot-proj/agent/sessions/31575255/contexts/avatar",
+        "parameters": {
+          "avatarUrl": "https://avatarbot.perosa.com/view/avatar.png"
+        }
+      },
+      {
+        "lifespanCount": 7,
+        "name": "projects/avatarbot-proj/agent/sessions/31575255/contexts/tags"
+      }
+    ],
+    "parameters": {},
+    "queryText": "Female"
+  },
+  "responseId": "ed47c1fc-01c6-41ed-8790-9bc30a06ad51-415208ed",
+  "session": "projects/avatarbot-proj/agent/sessions/31575255"
+}

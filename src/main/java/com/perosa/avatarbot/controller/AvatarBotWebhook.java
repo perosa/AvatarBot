@@ -1,14 +1,14 @@
 package com.perosa.avatarbot.controller;
 
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2EventInput;
+import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2Context;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2WebhookRequest;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2WebhookResponse;
 import com.perosa.avatarbot.model.Session;
 import com.perosa.avatarbot.model.SessionStore;
 import com.perosa.avatarbot.payload.PayloadParser;
 import com.perosa.avatarbot.util.ApplicationProperty;
-import com.perosa.avatarbot.util.ResourceHelper;
+import com.perosa.avatarbot.util.FileHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,22 +17,25 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
-public class MainController {
+public class AvatarBotWebhook {
 
-    private static final Logger LOGGER = Logger.getLogger(MainController.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(AvatarBotWebhook.class.getName());
     //
 
     @Autowired
     private PayloadParser payloadParser;
     //
     @Autowired
-    private ResourceHelper resourceHelper;
+    private FileHelper fileHelper;
     //
     @Autowired
     private ApplicationProperty applicationProperty;
@@ -55,10 +58,10 @@ public class MainController {
         GoogleCloudDialogflowV2WebhookRequest request = null;
         GoogleCloudDialogflowV2WebhookResponse response = null;
 
-        //verifyToken(httpServletRequest);
-
         request = extractGoogleCloudDialogflowV2WebhookRequest(body);
+
         response = new GoogleCloudDialogflowV2WebhookResponse();
+        response.setOutputContexts(new ArrayList<>());
 
         LOGGER.info("request: " + request);
 
@@ -68,15 +71,19 @@ public class MainController {
 
         String sessionId = request.getSession();
         String input = getPayloadParser().getUserText(request);
-        String intent = getPayloadParser().getIntentDisplayName(request);
 
         if (getPayloadParser().isWelcomeIntent(request)) {
             getSessionStore().addTo(new Session(sessionId));
-//        } else if (getPayloadParser().getIntentDisplayName(request).equalsIgnoreCase("AllCriteriaPassed")) {
-//            // followUp Welcome to re-trigger the Welcome Intent
+        } else if (getPayloadParser().getIntentDisplayName(request).equalsIgnoreCase("AllCriteriaPassed")) {
+            // followUp Welcome to re-trigger the Welcome Intent
 //            GoogleCloudDialogflowV2EventInput googleCloudDialogflowV2EventInput = new GoogleCloudDialogflowV2EventInput();
 //            googleCloudDialogflowV2EventInput.setName("getAvatar");
 //            response.setFollowupEventInput(googleCloudDialogflowV2EventInput);
+
+            String path = "src/main/resources/avatars/professional/male";
+
+            setOutputContext(sessionId + "/contexts/avatar",
+                    getFileHelper().getUrl(getHost(httpServletRequest), getFileHelper().getRandomFile(path)), response);
         } else {
 
             Session session = getSessionStore().getFrom(sessionId);
@@ -90,7 +97,8 @@ public class MainController {
             }
         }
 
-        LOGGER.info("session : " + getSessionStore().getFrom(sessionId));
+        LOGGER.fine("response : " + response);
+
         return response;
 
     }
@@ -111,6 +119,24 @@ public class MainController {
         return googleCloudDialogflowV2WebhookRequest;
     }
 
+    private void setOutputContext(String contextName, String avatarUrl, GoogleCloudDialogflowV2WebhookResponse response) {
+        LOGGER.fine("setOutputContext sessionId:" + contextName);
+
+        GoogleCloudDialogflowV2Context outputContext = new GoogleCloudDialogflowV2Context();
+        outputContext.setName(contextName);
+        outputContext.setLifespanCount(5);
+        Map<String, Object> outputContextParameters = new HashMap<>();
+
+        outputContextParameters.put("avatarUrl", avatarUrl);
+        outputContext.setParameters(outputContextParameters);
+
+        response.getOutputContexts().add(outputContext);
+
+    }
+
+    private String getHost(HttpServletRequest httpServletRequest) {
+        return "https://" + httpServletRequest.getServerName();
+    }
 
     public PayloadParser getPayloadParser() {
         return payloadParser;
@@ -120,20 +146,12 @@ public class MainController {
         this.payloadParser = payloadParser;
     }
 
-    public ResourceHelper getResourceHelper() {
-        return resourceHelper;
+    public FileHelper getFileHelper() {
+        return fileHelper;
     }
 
-    public void setResourceHelper(ResourceHelper resourceHelper) {
-        this.resourceHelper = resourceHelper;
-    }
-
-    public ApplicationProperty getApplicationProperty() {
-        return applicationProperty;
-    }
-
-    public void setApplicationProperty(ApplicationProperty applicationProperty) {
-        this.applicationProperty = applicationProperty;
+    public void setFileHelper(FileHelper fileHelper) {
+        this.fileHelper = fileHelper;
     }
 
     public SessionStore getSessionStore() {
