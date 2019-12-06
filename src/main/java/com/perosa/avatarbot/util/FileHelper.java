@@ -16,12 +16,19 @@ public class FileHelper {
     private static final Logger LOGGER = Logger.getLogger(FileHelper.class.getName());
 
     public String getRandomFile(String path) {
+        LOGGER.fine("getRandomFile " + path);
+
+        String filepath = null;
 
         File[] files = getFiles(path);
 
-        String filepath =  files[new Random().nextInt(files.length)].getAbsolutePath()
-                .replace("/", "---")
-                .replace("\\", "---");
+        if(files != null && files.length > 0) {
+            filepath = files[new Random().nextInt(files.length)].getAbsolutePath()
+                    .replace("/", "---")
+                    .replace("\\", "---");
+        }
+
+        LOGGER.fine("getRandomFile " + filepath);
 
         return filepath;
     }
@@ -39,13 +46,9 @@ public class FileHelper {
 
     public byte[] getContent(String filepath) {
 
-        LOGGER.info("filepath: " + filepath);
-
         filepath = filepath.replace("---", "/");
 
         byte[] byteFileContent = null;
-
-        LOGGER.info("filepath: " + filepath);
 
         try (InputStream is = new FileInputStream(filepath)) {
             byteFileContent = IOUtils.toByteArray(is);

@@ -1,4 +1,4 @@
-package com.perosa.avatarbot.payload;
+package com.perosa.avatarbot.core.payload;
 
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2WebhookRequest;

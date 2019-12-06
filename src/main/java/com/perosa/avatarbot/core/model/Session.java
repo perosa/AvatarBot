@@ -1,4 +1,4 @@
-package com.perosa.avatarbot.model;
+package com.perosa.avatarbot.core.model;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;

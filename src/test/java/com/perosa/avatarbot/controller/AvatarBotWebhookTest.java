@@ -1,7 +1,7 @@
 package com.perosa.avatarbot.controller;
 
-import com.perosa.avatarbot.model.Session;
-import com.perosa.avatarbot.model.SessionStore;
+import com.perosa.avatarbot.core.model.Session;
+import com.perosa.avatarbot.core.model.SessionStore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

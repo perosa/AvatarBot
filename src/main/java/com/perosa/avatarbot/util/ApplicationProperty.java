@@ -1,21 +1,20 @@
 package com.perosa.avatarbot.util;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.context.annotation.Configuration;
 
-@Service
+@Configuration
 public class ApplicationProperty {
 
     //
-    @Value("${resources.folder}")
-    private String resourcesFolder;
+    @Value("${avatars.home}")
+    private String avatarsHome;
 
-    public String getResourcesFolder() {
-        return resourcesFolder;
+    public String getAvatarsHome() {
+        return avatarsHome;
     }
 
-    public void setResourcesFolder(String resourcesFolder) {
-        this.resourcesFolder = resourcesFolder;
+    public void setAvatarsHome(String avatarsHome) {
+        this.avatarsHome = avatarsHome;
     }
-
 }

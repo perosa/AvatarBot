@@ -1,4 +1,4 @@
-package com.perosa.avatarbot.payload;
+package com.perosa.avatarbot.core.payload;
 
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2Context;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2QueryResult;

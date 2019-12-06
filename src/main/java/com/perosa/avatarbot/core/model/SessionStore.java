@@ -1,4 +1,4 @@
-package com.perosa.avatarbot.model;
+package com.perosa.avatarbot.core.model;
 
 import org.springframework.stereotype.Service;
 

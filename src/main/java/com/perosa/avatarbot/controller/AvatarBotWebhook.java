@@ -4,10 +4,11 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2Context;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2WebhookRequest;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2WebhookResponse;
-import com.perosa.avatarbot.model.Session;
-import com.perosa.avatarbot.model.SessionStore;
-import com.perosa.avatarbot.payload.PayloadParser;
-import com.perosa.avatarbot.util.ApplicationProperty;
+import com.perosa.avatarbot.controller.config.Env;
+import com.perosa.avatarbot.core.Matcher;
+import com.perosa.avatarbot.core.model.Session;
+import com.perosa.avatarbot.core.model.SessionStore;
+import com.perosa.avatarbot.core.payload.PayloadParser;
 import com.perosa.avatarbot.util.FileHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,15 +39,18 @@ public class AvatarBotWebhook {
     private FileHelper fileHelper;
     //
     @Autowired
-    private ApplicationProperty applicationProperty;
+    private SessionStore sessionStore;
     //
     @Autowired
-    private SessionStore sessionStore;
+    private Matcher matcher;
+    //
+    @Autowired
+    private Env env;
 
     private static JacksonFactory jacksonFactory = JacksonFactory.getDefaultInstance();
 
-    @RequestMapping(value = "/avatarbot/test", method = GET, produces = "text/plain")
-    public String test() {
+    @RequestMapping(value = "/avatarbot/ping", method = GET, produces = "text/plain")
+    public String ping() {
         LOGGER.info("test URL");
         return "ok";
     }
@@ -59,47 +63,48 @@ public class AvatarBotWebhook {
         GoogleCloudDialogflowV2WebhookResponse response = null;
 
         request = extractGoogleCloudDialogflowV2WebhookRequest(body);
-
         response = new GoogleCloudDialogflowV2WebhookResponse();
         response.setOutputContexts(new ArrayList<>());
 
-        LOGGER.info("request: " + request);
-
-        if (request == null) {
-            throw new RuntimeException("Request is null");
-        }
+        LOGGER.fine("request: " + request);
 
         String sessionId = request.getSession();
-        String input = getPayloadParser().getUserText(request);
+
+        Session session = getSessionStore().getFrom(sessionId);
+
+        collectTags(request, session);
 
         if (getPayloadParser().isWelcomeIntent(request)) {
             getSessionStore().addTo(new Session(sessionId));
+            setOutputContext(sessionId + "/contexts/avatar", null, response);
         } else if (getPayloadParser().getIntentDisplayName(request).equalsIgnoreCase("AllCriteriaPassed")) {
-            // followUp Welcome to re-trigger the Welcome Intent
-//            GoogleCloudDialogflowV2EventInput googleCloudDialogflowV2EventInput = new GoogleCloudDialogflowV2EventInput();
-//            googleCloudDialogflowV2EventInput.setName("getAvatar");
-//            response.setFollowupEventInput(googleCloudDialogflowV2EventInput);
 
-            String path = "src/main/resources/avatars/professional/male";
+            String avatar = getMatcher().match(session.getTags(), getHost(httpServletRequest));
 
-            setOutputContext(sessionId + "/contexts/avatar",
-                    getFileHelper().getUrl(getHost(httpServletRequest), getFileHelper().getRandomFile(path)), response);
-        } else {
-
-            Session session = getSessionStore().getFrom(sessionId);
-            if (session == null) {
-                throw new RuntimeException("Session is null");
-            }
-
-            String action = getPayloadParser().getAction(request);
-            if (action != null && action.equalsIgnoreCase("tag")) {
-                session.addToTags(input);
+            if (avatar != null) {
+                setOutputContext(sessionId + "/contexts/avatar", avatar, response);
             }
         }
 
-        LOGGER.fine("response : " + response);
+        LOGGER.fine("response->" + response);
 
         return response;
+
+    }
+
+    private void collectTags(GoogleCloudDialogflowV2WebhookRequest request, Session session) {
+
+        String tag = null;
+
+        String action = getPayloadParser().getAction(request);
+        if (action != null && action.equalsIgnoreCase("tag")) {
+            tag = getPayloadParser().getUserText(request);
+        }
+
+        if (session != null && tag != null) {
+            session.addToTags(tag.toLowerCase());
+        }
+
 
     }
 
@@ -125,10 +130,17 @@ public class AvatarBotWebhook {
         GoogleCloudDialogflowV2Context outputContext = new GoogleCloudDialogflowV2Context();
         outputContext.setName(contextName);
         outputContext.setLifespanCount(5);
+
         Map<String, Object> outputContextParameters = new HashMap<>();
 
-        outputContextParameters.put("avatarUrl", avatarUrl);
-        outputContext.setParameters(outputContextParameters);
+        if(avatarUrl != null) {
+            outputContextParameters.put("avatarUrl", avatarUrl);
+            outputContext.setParameters(outputContextParameters);
+        } else {
+            outputContextParameters.remove("avatarUrl");
+            outputContext.setParameters(outputContextParameters);
+
+        }
 
         response.getOutputContexts().add(outputContext);
 
@@ -160,5 +172,21 @@ public class AvatarBotWebhook {
 
     public void setSessionStore(SessionStore sessionStore) {
         this.sessionStore = sessionStore;
+    }
+
+    public Env getEnv() {
+        return env;
+    }
+
+    public void setEnv(Env env) {
+        this.env = env;
+    }
+
+    public Matcher getMatcher() {
+        return matcher;
+    }
+
+    public void setMatcher(Matcher matcher) {
+        this.matcher = matcher;
     }
 }
