@@ -32,6 +32,17 @@
             <artifactId>google-api-services-dialogflow</artifactId>
             <version>v2-rev35-1.25.0</version>
         </dependency>
+        <!-- dialogflow -->
+        <dependency>
+            <groupId>com.google.cloud</groupId>
+            <artifactId>google-cloud-storage</artifactId>
+            <version>1.50.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.cloud</groupId>
+            <artifactId>google-cloud-dialogflow</artifactId>
+            <version>0.68.0-alpha</version>
+        </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
