@@ -34,7 +34,6 @@ public class AvatarAssets {
     @RequestMapping(value = "/avatarbot/view/{filename:.+}", method = GET)
     public ResponseEntity<byte[]> viewResource(@PathVariable String filename,
                                                HttpServletRequest httpServletRequest) {
-        LOGGER.info("viewResource filename:" + filename);
 
         byte[] byteFileContent = getFileHelper().getContent(filename);
 

@@ -2,6 +2,7 @@ package com.perosa.avatarbot.controller;
 
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2Context;
+import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2EventInput;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2WebhookRequest;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2WebhookResponse;
 import com.perosa.avatarbot.controller.config.Env;
@@ -76,14 +77,37 @@ public class AvatarBotWebhook {
 
         if (getPayloadParser().isWelcomeIntent(request)) {
             getSessionStore().addTo(new Session(sessionId));
-            setOutputContext(sessionId + "/contexts/avatar", null, response);
         } else if (getPayloadParser().getIntentDisplayName(request).equalsIgnoreCase("AllCriteriaPassed")) {
 
             String avatar = getMatcher().match(session.getTags(), getHost(httpServletRequest));
 
             if (avatar != null) {
-                setOutputContext(sessionId + "/contexts/avatar", avatar, response);
+                Map<String, Object> outputContextParameters = new HashMap<>();
+                outputContextParameters.put("avatarUrl", avatar);
+                setOutputContext(sessionId + "/contexts/avatar", outputContextParameters, response);
+
+                GoogleCloudDialogflowV2EventInput eventInput = new GoogleCloudDialogflowV2EventInput();
+                eventInput.setName("EV_FOUND");
+                response.setFollowupEventInput(eventInput);
+            } else {
+                session.getTags().clear();
+
+                GoogleCloudDialogflowV2EventInput eventInput = new GoogleCloudDialogflowV2EventInput();
+                eventInput.setName("EV_NOT_FOUND");
+                response.setFollowupEventInput(eventInput);
             }
+        } else if (getPayloadParser().getIntentDisplayName(request).equalsIgnoreCase("AvatarNotFound - yes")) {
+            setOutputContext(sessionId + "/contexts/DefaultWelcomeIntent-followup", null, response);
+
+            GoogleCloudDialogflowV2EventInput eventInput = new GoogleCloudDialogflowV2EventInput();
+            eventInput.setName("EV_TRY_AGAIN");
+            response.setFollowupEventInput(eventInput);
+        } else if (getPayloadParser().getIntentDisplayName(request).equalsIgnoreCase("AvatarFound - TryAgain")) {
+            setOutputContext(sessionId + "/contexts/DefaultWelcomeIntent-followup", null, response);
+
+            GoogleCloudDialogflowV2EventInput eventInput = new GoogleCloudDialogflowV2EventInput();
+            eventInput.setName("EV_TRY_AGAIN");
+            response.setFollowupEventInput(eventInput);
         }
 
         LOGGER.fine("response->" + response);
@@ -124,26 +148,17 @@ public class AvatarBotWebhook {
         return googleCloudDialogflowV2WebhookRequest;
     }
 
-    private void setOutputContext(String contextName, String avatarUrl, GoogleCloudDialogflowV2WebhookResponse response) {
-        LOGGER.fine("setOutputContext sessionId:" + contextName);
+    private void setOutputContext(String contextName, Map<String, Object> outputContextParameters, GoogleCloudDialogflowV2WebhookResponse response) {
 
         GoogleCloudDialogflowV2Context outputContext = new GoogleCloudDialogflowV2Context();
         outputContext.setName(contextName);
         outputContext.setLifespanCount(5);
 
-        Map<String, Object> outputContextParameters = new HashMap<>();
-
-        if(avatarUrl != null) {
-            outputContextParameters.put("avatarUrl", avatarUrl);
+        if(outputContextParameters != null && !outputContextParameters.isEmpty()) {
             outputContext.setParameters(outputContextParameters);
-        } else {
-            outputContextParameters.remove("avatarUrl");
-            outputContext.setParameters(outputContextParameters);
-
         }
 
         response.getOutputContexts().add(outputContext);
-
     }
 
     private String getHost(HttpServletRequest httpServletRequest) {

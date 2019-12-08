@@ -16,7 +16,6 @@ public class FileHelper {
     private static final Logger LOGGER = Logger.getLogger(FileHelper.class.getName());
 
     public String getRandomFile(String path) {
-        LOGGER.fine("getRandomFile " + path);
 
         String filepath = null;
 
@@ -28,7 +27,7 @@ public class FileHelper {
                     .replace("\\", "---");
         }
 
-        LOGGER.fine("getRandomFile " + filepath);
+        LOGGER.fine("getRandomFile filepath: " + filepath);
 
         return filepath;
     }
