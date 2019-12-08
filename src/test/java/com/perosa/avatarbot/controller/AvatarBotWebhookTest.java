@@ -1,5 +1,6 @@
 package com.perosa.avatarbot.controller;
 
+import com.perosa.avatarbot.core.Matcher;
 import com.perosa.avatarbot.core.model.Session;
 import com.perosa.avatarbot.core.model.SessionStore;
 import org.junit.Test;
@@ -13,6 +14,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.io.InputStream;
+import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.isA;
@@ -30,6 +32,8 @@ public class AvatarBotWebhookTest {
     private MockMvc mockMvc;
     @MockBean
     private SessionStore sessionStore;
+    @MockBean
+    private Matcher matcher;
 
     @Test
     public void hi() throws Exception {
@@ -69,6 +73,7 @@ public class AvatarBotWebhookTest {
     public void getAvatar() throws Exception {
 
         given(sessionStore.getFrom(isA(String.class))).willReturn(new Session("0001"));
+        given(matcher.match(isA(List.class), isA(String.class))).willReturn("/path/avatar.png");
 
         InputStream inputStream = getClass().getResourceAsStream("/getAvatar.json");
 

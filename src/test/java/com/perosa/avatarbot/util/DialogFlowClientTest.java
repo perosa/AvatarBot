@@ -1,6 +1,7 @@
 package com.perosa.avatarbot.util;
 
 import com.google.cloud.dialogflow.v2.DetectIntentResponse;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@Ignore
 public class DialogFlowClientTest {
 
     private static final Logger LOGGER = Logger.getLogger(DialogFlowClient.class.getName());
