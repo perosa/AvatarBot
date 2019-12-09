@@ -52,7 +52,7 @@ public class AvatarBotWebhook {
 
     @RequestMapping(value = "/avatarbot/ping", method = GET, produces = "text/plain")
     public String ping() {
-        LOGGER.info("test URL");
+        LOGGER.info("Ping");
         return "ok";
     }
 
@@ -67,7 +67,7 @@ public class AvatarBotWebhook {
         response = new GoogleCloudDialogflowV2WebhookResponse();
         response.setOutputContexts(new ArrayList<>());
 
-        LOGGER.fine("request: " + request);
+        //LOGGER.fine("request: " + request);
 
         String sessionId = request.getSession();
 
@@ -79,6 +79,8 @@ public class AvatarBotWebhook {
             getSessionStore().addTo(new Session(sessionId));
         } else if (getPayloadParser().getIntentDisplayName(request).equalsIgnoreCase("AllCriteriaPassed")) {
 
+            LOGGER.fine("tags: " + session.getTags());
+
             String avatar = getMatcher().match(session.getTags(), getHost(httpServletRequest));
 
             if (avatar != null) {
@@ -89,13 +91,20 @@ public class AvatarBotWebhook {
                 GoogleCloudDialogflowV2EventInput eventInput = new GoogleCloudDialogflowV2EventInput();
                 eventInput.setName("EV_FOUND");
                 response.setFollowupEventInput(eventInput);
-            } else {
-                session.getTags().clear();
 
+                LOGGER.info("EV_FOUND: " + avatar);
+
+            } else {
                 GoogleCloudDialogflowV2EventInput eventInput = new GoogleCloudDialogflowV2EventInput();
                 eventInput.setName("EV_NOT_FOUND");
                 response.setFollowupEventInput(eventInput);
+
+                LOGGER.info("EV_NOT_FOUND");
             }
+
+            // clear to enable new search
+            session.getTags().clear();
+
         } else if (getPayloadParser().getIntentDisplayName(request).equalsIgnoreCase("AvatarNotFound - yes")) {
             setOutputContext(sessionId + "/contexts/DefaultWelcomeIntent-followup", null, response);
 

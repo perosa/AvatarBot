@@ -27,7 +27,11 @@ public class FileHelper {
                     .replace("\\", "---");
         }
 
-        LOGGER.fine("getRandomFile filepath: " + filepath);
+        if(filepath != null) {
+            LOGGER.info("getRandomFile file found at " + filepath);
+        } else {
+            LOGGER.warning("getRandomFile fileNotFound in path " + path);
+        }
 
         return filepath;
     }

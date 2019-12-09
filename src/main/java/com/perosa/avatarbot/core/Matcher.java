@@ -1,6 +1,6 @@
 package com.perosa.avatarbot.core;
 
-import com.perosa.avatarbot.util.ApplicationProperty;
+import com.perosa.avatarbot.controller.config.Env;
 import com.perosa.avatarbot.util.FileHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,9 +15,9 @@ public class Matcher {
     private static final Logger LOGGER = Logger.getLogger(Matcher.class.getName());
 
     @Autowired
-    private ApplicationProperty applicationProperty;
-    @Autowired
     private FileHelper fileHelper;
+    @Autowired
+    private Env env;
 
     public String match(List<String> tags, String host) {
         LOGGER.fine("match " + tags);
@@ -34,18 +34,10 @@ public class Matcher {
     }
 
     String getPath(List<String> tags) {
-        return getApplicationProperty().getAvatarsHome() +
+        return getEnv().getAvatarsHome() +
                 tags.stream()
                         .map(Object::toString)
                         .collect(Collectors.joining("/"));
-    }
-
-    public ApplicationProperty getApplicationProperty() {
-        return applicationProperty;
-    }
-
-    public void setApplicationProperty(ApplicationProperty applicationProperty) {
-        this.applicationProperty = applicationProperty;
     }
 
     public FileHelper getFileHelper() {
@@ -54,5 +46,13 @@ public class Matcher {
 
     public void setFileHelper(FileHelper fileHelper) {
         this.fileHelper = fileHelper;
+    }
+
+    public Env getEnv() {
+        return env;
+    }
+
+    public void setEnv(Env env) {
+        this.env = env;
     }
 }

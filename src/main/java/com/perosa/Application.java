@@ -1,6 +1,5 @@
 package com.perosa;
 
-import com.perosa.avatarbot.util.ApplicationProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,9 +17,6 @@ public class Application  extends SpringBootServletInitializer {
     //
 
 
-    @Autowired
-    private ApplicationProperty applicationProperty;
-
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
@@ -36,13 +32,5 @@ public class Application  extends SpringBootServletInitializer {
 //        configurer.favorPathExtension(false);  // disabling auto media type from extension
 //    }
 
-
-    public ApplicationProperty getApplicationProperty() {
-        return applicationProperty;
-    }
-
-    public void setApplicationProperty(ApplicationProperty applicationProperty) {
-        this.applicationProperty = applicationProperty;
-    }
 
 }

@@ -5,24 +5,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class Env {
 
-    public String getProjectId() {
-        String projectId = System.getenv("AVATARBOT_PROJECT_ID");
+    public String getAvatarsHome() {
+        String home = System.getenv("AVATARBOT_HOME");
 
-        if (projectId == null || projectId.isEmpty()) {
-            projectId = "brandmybot-qaqudq";
+        if (home == null || home.isEmpty()) {
+            home = "src/main/resources/avatars/";
         }
 
-        return projectId;
+        return home;
     }
 
-    public String getGoogleServiceAccountJsonFile() {
-        String jsonFile = System.getenv("AVATARBOT_SVC_ACCOUNT_JSON_FILE");
-
-        if (jsonFile == null || jsonFile.isEmpty()) {
-            jsonFile = "/brandmybot-qaqudq-920c6091174a.json";
-        }
-
-        return jsonFile;
-    }
 
 }
