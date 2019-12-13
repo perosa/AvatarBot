@@ -47,7 +47,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>2.9.10</version>
+            <version>2.10.1</version>
         </dependency>
         <!-- Upgrade jackson-databind to address vulnerability CVE-2019-14540 -->
         <dependency>
