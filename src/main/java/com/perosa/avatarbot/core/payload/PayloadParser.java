@@ -12,7 +12,12 @@ public class PayloadParser {
 
     private static final Logger LOGGER = Logger.getLogger(PayloadParser.class.getName());
 
-    public boolean isWelcomeIntent(GoogleCloudDialogflowV2WebhookRequest webHookRequest) {
+    /**
+     * True if Welcome Intent is found
+     * @param webHookRequest
+     * @return
+     */
+        public boolean isWelcomeIntent(GoogleCloudDialogflowV2WebhookRequest webHookRequest) {
         boolean ret = false;
 
         String action = getAction(webHookRequest);
@@ -24,10 +29,21 @@ public class PayloadParser {
         return ret;
     }
 
+    /**
+     * Get input typed by the user
+     * @param webHookRequest
+     * @return
+     */
     public String getUserText(GoogleCloudDialogflowV2WebhookRequest webHookRequest) {
         return webHookRequest.getQueryResult().getQueryText();
     }
 
+    /**
+     * Get context given itsname
+     * @param webHookRequest
+     * @param name
+     * @return
+     */
     public GoogleCloudDialogflowV2Context getContext(GoogleCloudDialogflowV2WebhookRequest webHookRequest, String name) {
 
         GoogleCloudDialogflowV2Context outputContext = null;
@@ -42,8 +58,6 @@ public class PayloadParser {
 
         return outputContext;
     }
-
-
 
     /**
      * Retrieves the action name from the matched intent.
@@ -63,6 +77,11 @@ public class PayloadParser {
         return action;
     }
 
+    /**
+     * Get Display Name of the Intent
+     * @param webHookRequest
+     * @return
+     */
     public String getIntentDisplayName(GoogleCloudDialogflowV2WebhookRequest webHookRequest) {
         String action = "";
 

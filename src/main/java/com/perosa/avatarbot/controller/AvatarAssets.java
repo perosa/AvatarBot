@@ -65,9 +65,5 @@ public class AvatarAssets {
         return fileHelper;
     }
 
-    public void setFileHelper(FileHelper fileHelper) {
-        this.fileHelper = fileHelper;
-    }
-
 }
 

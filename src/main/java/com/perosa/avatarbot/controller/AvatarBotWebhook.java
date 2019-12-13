@@ -10,7 +10,6 @@ import com.perosa.avatarbot.core.Matcher;
 import com.perosa.avatarbot.core.model.Session;
 import com.perosa.avatarbot.core.model.SessionStore;
 import com.perosa.avatarbot.core.payload.PayloadParser;
-import com.perosa.avatarbot.util.FileHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,9 +35,6 @@ public class AvatarBotWebhook {
 
     @Autowired
     private PayloadParser payloadParser;
-    //
-    @Autowired
-    private FileHelper fileHelper;
     //
     @Autowired
     private SessionStore sessionStore;
@@ -217,39 +213,16 @@ public class AvatarBotWebhook {
         return payloadParser;
     }
 
-    public void setPayloadParser(PayloadParser payloadParser) {
-        this.payloadParser = payloadParser;
-    }
-
-    public FileHelper getFileHelper() {
-        return fileHelper;
-    }
-
-    public void setFileHelper(FileHelper fileHelper) {
-        this.fileHelper = fileHelper;
-    }
-
     public SessionStore getSessionStore() {
         return sessionStore;
-    }
-
-    public void setSessionStore(SessionStore sessionStore) {
-        this.sessionStore = sessionStore;
     }
 
     public Env getEnv() {
         return env;
     }
 
-    public void setEnv(Env env) {
-        this.env = env;
-    }
-
     public Matcher getMatcher() {
         return matcher;
     }
 
-    public void setMatcher(Matcher matcher) {
-        this.matcher = matcher;
-    }
 }
