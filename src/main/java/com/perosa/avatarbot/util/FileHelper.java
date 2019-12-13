@@ -63,6 +63,6 @@ public class FileHelper {
     }
 
     public String getUrl(String host, String file) {
-        return host + "/avatarbot/view/" + file;
+        return host + "/avatarbot/get/" + file;
     }
 }

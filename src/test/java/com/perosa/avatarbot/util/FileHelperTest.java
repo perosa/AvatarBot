@@ -32,6 +32,6 @@ class FileHelperTest {
     public void getUrl() {
 
         FileHelper fileHelper = new FileHelper();
-        assertEquals("http://localhost/avatarbot/view/dir/man.png", fileHelper.getUrl("http://localhost","dir/man.png"));
+        assertEquals("http://localhost/avatarbot/get/dir/man.png", fileHelper.getUrl("http://localhost","dir/man.png"));
     }
 }

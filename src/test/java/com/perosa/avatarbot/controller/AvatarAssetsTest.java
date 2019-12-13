@@ -29,11 +29,11 @@ public class AvatarAssetsTest {
     private FileHelper fileHelper;
 
     @Test
-    public void getVideoResource() throws Exception {
+    public void fetch() throws Exception {
 
         given(fileHelper.getContent(isA(String.class))).willReturn("Content...".getBytes());
 
-        this.mockMvc.perform(get("/avatarbot/view/robot.png")
+        this.mockMvc.perform(get("/avatarbot/get/robot.png")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.valueOf("image/png")));

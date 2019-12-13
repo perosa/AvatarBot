@@ -28,28 +28,28 @@ public class AvatarAssets {
     /**
      * Fetch resources
      *
-     * @param filename name of the resource
+     * @param name name of the resource
      * @return
      */
-    @RequestMapping(value = "/avatarbot/view/{filename:.+}", method = GET)
-    public ResponseEntity<byte[]> viewResource(@PathVariable String filename,
+    @RequestMapping(value = "/avatarbot/get/{name:.+}", method = GET)
+    public ResponseEntity<byte[]> fetch(@PathVariable String name,
                                                HttpServletRequest httpServletRequest) {
 
-        byte[] byteFileContent = getFileHelper().getContent(filename);
+        byte[] byteFileContent = getFileHelper().getContent(name);
 
         if (byteFileContent == null) {
-            LOGGER.warning("File Not Found: " + filename);
-            return getErrorResponse("Resource Not Found: " + filename);
+            LOGGER.warning("File Not Found: " + name);
+            return getErrorResponse("Resource Not Found: " + name);
         }
 
         MediaType mediaType = MediaType.IMAGE_PNG;
 
-        if (filename.endsWith(".jpg")) {
+        if (name.endsWith(".jpg")) {
             mediaType = MediaType.IMAGE_JPEG;
         }
 
         return ResponseEntity.status(HttpStatus.OK)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + name + "\"")
                 .contentType(mediaType)
                 .body(byteFileContent);
 
