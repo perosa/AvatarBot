@@ -1,7 +1,5 @@
 # AvatarBot
-Help you finding an Avatar for your chatbot.
-
-Answer a couple of questions and see what you get 
+Help you finding an Avatar for your chatbot: answer a couple of questions and see what you get 
 
 Avaiable on GitHub https://perosa.github.io/avatarBot.html and Telegram https://telegram.me/TheAvatarBot
 
