@@ -15,5 +15,8 @@ public class Env {
         return home;
     }
 
+    public String getToken() {
+        return System.getenv("AVATARBOT_TOKEN");
+    }
 
 }

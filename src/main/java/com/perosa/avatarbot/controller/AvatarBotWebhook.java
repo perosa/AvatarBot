@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -67,7 +68,13 @@ public class AvatarBotWebhook {
         response = new GoogleCloudDialogflowV2WebhookResponse();
         response.setOutputContexts(new ArrayList<>());
 
-        //LOGGER.fine("request: " + request);
+        String token = getToken(httpServletRequest);
+
+        if (token == null || !token.equals("Bearer " + getEnv().getToken())) {
+            throw new RuntimeException("Unauthorised token: " + token);
+        }
+
+        LOGGER.fine("request: " + request);
 
         String sessionId = request.getSession();
 
@@ -174,6 +181,36 @@ public class AvatarBotWebhook {
 
     private String getHost(HttpServletRequest httpServletRequest) {
         return "https://" + httpServletRequest.getServerName();
+    }
+
+    private void verify(HttpServletRequest request) {
+
+        String header = getToken(request);
+
+        if (header == null || !header.equals(getEnv().getToken())) {
+            throw new RuntimeException("Invalid token: " + header);
+        }
+
+    }
+
+    private String getToken(HttpServletRequest request) {
+        String token = null;
+
+        Enumeration headers = request.getHeaderNames();
+
+        if (headers.hasMoreElements()) {
+            do {
+                String header = (String) headers.nextElement();
+
+                if (header.equalsIgnoreCase("authorization")) {
+                    token = request.getHeader(header);
+                    break;
+                }
+
+            } while (headers.hasMoreElements());
+        }
+
+        return token;
     }
 
     public PayloadParser getPayloadParser() {

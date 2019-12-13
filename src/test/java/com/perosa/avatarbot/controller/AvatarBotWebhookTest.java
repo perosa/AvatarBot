@@ -1,5 +1,6 @@
 package com.perosa.avatarbot.controller;
 
+import com.perosa.avatarbot.controller.config.Env;
 import com.perosa.avatarbot.core.Matcher;
 import com.perosa.avatarbot.core.model.Session;
 import com.perosa.avatarbot.core.model.SessionStore;
@@ -34,11 +35,14 @@ public class AvatarBotWebhookTest {
     private SessionStore sessionStore;
     @MockBean
     private Matcher matcher;
+    @MockBean
+    private Env env;
 
     @Test
     public void hi() throws Exception {
 
         given(sessionStore.getFrom(isA(String.class))).willReturn(new Session("0001"));
+        given(env.getToken()).willReturn("t");
 
         InputStream inputStream = getClass().getResourceAsStream("/hi.json");
 
@@ -46,6 +50,7 @@ public class AvatarBotWebhookTest {
         inputStream.read(targetArray);
 
         this.mockMvc.perform(post("/avatarbot/post")
+                .header("authorization", "Bearer t")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(targetArray))
                 .andExpect(status().isOk())
@@ -56,6 +61,7 @@ public class AvatarBotWebhookTest {
     public void funTag() throws Exception {
 
         given(sessionStore.getFrom(isA(String.class))).willReturn(new Session("0001"));
+        given(env.getToken()).willReturn("t");
 
         InputStream inputStream = getClass().getResourceAsStream("/funTag.json");
 
@@ -63,6 +69,7 @@ public class AvatarBotWebhookTest {
         inputStream.read(targetArray);
 
         this.mockMvc.perform(post("/avatarbot/post")
+                .header("authorization", "Bearer t")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(targetArray))
                 .andExpect(status().isOk())
@@ -74,6 +81,7 @@ public class AvatarBotWebhookTest {
 
         given(sessionStore.getFrom(isA(String.class))).willReturn(new Session("0001"));
         given(matcher.match(isA(List.class), isA(String.class))).willReturn("/path/avatar.png");
+        given(env.getToken()).willReturn("t");
 
         InputStream inputStream = getClass().getResourceAsStream("/getAvatar.json");
 
@@ -81,6 +89,7 @@ public class AvatarBotWebhookTest {
         inputStream.read(targetArray);
 
         this.mockMvc.perform(post("/avatarbot/post")
+                .header("authorization", "Bearer t")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(targetArray))
                 .andExpect(status().isOk())
