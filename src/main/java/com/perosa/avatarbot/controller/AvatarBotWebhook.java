@@ -75,6 +75,8 @@ public class AvatarBotWebhook {
 
         collectTags(request, session);
 
+        LOGGER.info("User says: " + getPayloadParser().getUserText(request));
+
         if (getPayloadParser().isWelcomeIntent(request)) {
             getSessionStore().addTo(new Session(sessionId));
         } else if (getPayloadParser().getIntentDisplayName(request).equalsIgnoreCase("AllCriteriaPassed")) {
