@@ -10,17 +10,14 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 import java.util.logging.Logger;
 
 @Service
-public class DashbotAgent {
+public class AnalyticsAgent {
 
-    private static final Logger LOGGER = Logger.getLogger(DashbotAgent.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(AnalyticsAgent.class.getName());
 
-    public void call(String apiKey, String payload) {
-
-        String endpoint = "https://dashbotconnector.herokuapp.com/send";
+    public void call(String endpoint, String apiKey, String payload) {
 
         HttpURLConnection connection = null;
         BufferedReader reader = null;
@@ -86,27 +83,6 @@ public class DashbotAgent {
             }
         }
 
-    }
-
-    void setHeaders(HttpURLConnection connection, Map<String, String> headers) {
-        if (headers.get("Content-Type") != null) {
-            connection.setRequestProperty("Content-Type", headers.get("Content-Type"));
-        }
-        if (headers.get("Accept") != null) {
-            connection.setRequestProperty("Accept", headers.get("Accept"));
-        }
-        if (headers.get("Host") != null) {
-            connection.setRequestProperty("Host", headers.get("Host"));
-        }
-        if (headers.get("Accept-Encoding") != null) {
-            connection.setRequestProperty("Accept-Encoding", headers.get("Accept-Encoding"));
-        }
-        if (headers.get("User-Agent") != null) {
-            connection.setRequestProperty("User-Agent", headers.get("User-Agent"));
-        }
-        if (headers.get("Authorization") != null) {
-            connection.setRequestProperty("Authorization", headers.get("Authorization"));
-        }
     }
 
 }

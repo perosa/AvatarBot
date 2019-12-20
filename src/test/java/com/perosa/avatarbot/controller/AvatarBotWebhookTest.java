@@ -2,6 +2,7 @@ package com.perosa.avatarbot.controller;
 
 import com.perosa.avatarbot.controller.config.Env;
 import com.perosa.avatarbot.core.Matcher;
+import com.perosa.avatarbot.core.analytics.AnalyticsAgent;
 import com.perosa.avatarbot.core.model.Session;
 import com.perosa.avatarbot.core.model.SessionStore;
 import org.junit.Test;
@@ -37,6 +38,8 @@ public class AvatarBotWebhookTest {
     private Matcher matcher;
     @MockBean
     private Env env;
+    @MockBean
+    private AnalyticsAgent analyticsAgent;
 
     @Test
     public void hi() throws Exception {

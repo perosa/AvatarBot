@@ -7,7 +7,7 @@ import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2Webhoo
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2WebhookResponse;
 import com.perosa.avatarbot.controller.config.Env;
 import com.perosa.avatarbot.core.Matcher;
-import com.perosa.avatarbot.core.analytics.DashbotAgent;
+import com.perosa.avatarbot.core.analytics.AnalyticsAgent;
 import com.perosa.avatarbot.core.model.Session;
 import com.perosa.avatarbot.core.model.SessionStore;
 import com.perosa.avatarbot.core.payload.PayloadParser;
@@ -47,7 +47,7 @@ public class AvatarBotWebhook {
     private Env env;
     //
     @Autowired
-    private DashbotAgent dashbotAgent;
+    private AnalyticsAgent analyticsAgent;
 
     private static JacksonFactory jacksonFactory = JacksonFactory.getDefaultInstance();
 
@@ -128,7 +128,11 @@ public class AvatarBotWebhook {
             response.setFollowupEventInput(eventInput);
         }
 
-        getDashbotAgent().call(httpServletRequest.getHeader("DASHBOT_API_KEY"), body);
+        String dashbotEndpoint = "https://dashbotconnector.herokuapp.com/send";
+        getAnalyticsAgent().call(dashbotEndpoint, httpServletRequest.getHeader("DASHBOT_API_KEY"), body);
+
+        String botmetricsEndpoint = "https://botmetricsconnector.herokuapp.com/send";
+        getAnalyticsAgent().call(botmetricsEndpoint, httpServletRequest.getHeader("BOTMETRICS_API_KEY"), body);
 
         LOGGER.fine("response->" + response);
 
@@ -231,8 +235,8 @@ public class AvatarBotWebhook {
         return matcher;
     }
 
-    public DashbotAgent getDashbotAgent() {
-        return dashbotAgent;
+    public AnalyticsAgent getAnalyticsAgent() {
+        return analyticsAgent;
     }
 
 }
