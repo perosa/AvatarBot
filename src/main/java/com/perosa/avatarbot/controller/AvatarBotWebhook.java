@@ -7,6 +7,7 @@ import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2Webhoo
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2WebhookResponse;
 import com.perosa.avatarbot.controller.config.Env;
 import com.perosa.avatarbot.core.Matcher;
+import com.perosa.avatarbot.core.analytics.DashbotAgent;
 import com.perosa.avatarbot.core.model.Session;
 import com.perosa.avatarbot.core.model.SessionStore;
 import com.perosa.avatarbot.core.payload.PayloadParser;
@@ -44,6 +45,9 @@ public class AvatarBotWebhook {
     //
     @Autowired
     private Env env;
+    //
+    @Autowired
+    private DashbotAgent dashbotAgent;
 
     private static JacksonFactory jacksonFactory = JacksonFactory.getDefaultInstance();
 
@@ -123,6 +127,8 @@ public class AvatarBotWebhook {
             eventInput.setName("EV_TRY_AGAIN");
             response.setFollowupEventInput(eventInput);
         }
+
+        getDashbotAgent().call(httpServletRequest.getHeader("DASHBOT_API_KEY"), body);
 
         LOGGER.fine("response->" + response);
 
@@ -223,6 +229,10 @@ public class AvatarBotWebhook {
 
     public Matcher getMatcher() {
         return matcher;
+    }
+
+    public DashbotAgent getDashbotAgent() {
+        return dashbotAgent;
     }
 
 }
