@@ -37,7 +37,7 @@ public class AnalyticsAgent {
             connection.setDoOutput(true);
             connection.setUseCaches(false);
 
-            connection.setRequestProperty("DASHBOT_API_KEY", apiKey);
+            connection.setRequestProperty("API_KEY", apiKey);
             connection.setRequestProperty("Content-Type", "application/json");
 
             if (payload != null) {
