@@ -30,7 +30,7 @@
         <dependency>
             <groupId>com.google.apis</groupId>
             <artifactId>google-api-services-dialogflow</artifactId>
-            <version>v3-rev20220222-1.32.1</version>
+            <version>v3-rev20220422-1.32.1</version>
         </dependency>
         <!-- dialogflow -->
         <dependency>
